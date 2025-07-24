@@ -1,9 +1,10 @@
+using RPG.Core;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace RPG.Movement
 {
-    public class Mover : MonoBehaviour
+    public class Mover : MonoBehaviour, IAction
     {
         private static readonly int ForwardSpeed = Animator.StringToHash("forwardSpeed");
         [SerializeField] private Transform target;
@@ -23,10 +24,20 @@ namespace RPG.Movement
         {
             UpdateAnimations();
         }
-
-        public void MoveTo(Vector3 hit)
+        public void StartMoveAction(Vector3 destination)
         {
-            _agent.destination = hit;
+            GetComponent<ActionScheduler>().StartAction(this);
+            MoveTo(destination);
+        }
+        public void MoveTo(Vector3 destination)
+        {
+            _agent.destination = destination;
+            _agent.isStopped = false;
+        }
+
+        public void Cancel()
+        {
+            _agent.isStopped = true;
         }
 
         private void UpdateAnimations()
