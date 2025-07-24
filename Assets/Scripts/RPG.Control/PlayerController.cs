@@ -1,3 +1,4 @@
+using RPG.Combat;
 using RPG.Movement;
 using UnityEngine;
 
@@ -18,21 +19,46 @@ namespace RPG.Control
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetMouseButton(0))
-            {
-                MoveToCursor();
-            }
+            if (InteractWithCombat()) return;
+            if(InteractWithMovement()) return;
+            Debug.Log("Nothing");
         }
 
-        private void MoveToCursor()
+        private bool InteractWithCombat()
         {
-            var ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            var hasHit = Physics.Raycast(ray, out var hit);
+            RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
+            foreach (RaycastHit hit in hits)
+            {
+                CombatTarget target = hit.transform.GetComponent<CombatTarget>();
+                if (target == null) continue;
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    GetComponent<Fighter>().Attack(target);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool InteractWithMovement()
+        {
+            var hasHit = Physics.Raycast(GetMouseRay(), out var hit);
             if (hasHit)
             {
-                _mover.MoveTo(hit.point);
+                if (Input.GetMouseButton(0))
+                {
+                    _mover.StartMoveAction(hit.point);
+                }
+                return true;
             }
+            return false;
         }
-
+        private Ray GetMouseRay()
+        {
+            return _mainCamera.ScreenPointToRay(Input.mousePosition);
+        }
     }
 }
