@@ -7,14 +7,17 @@ namespace RPG.Movement
     public class Mover : MonoBehaviour, IAction
     {
         private static readonly int ForwardSpeed = Animator.StringToHash("forwardSpeed");
-        [SerializeField] private Transform target;
         private NavMeshAgent _agent;
-
         private Animator _animator;
+        private Health _health;
+        private float _maxSpeed = 6f;
+        private ActionScheduler _actionScheduler;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
+            _actionScheduler = GetComponent<ActionScheduler>();
+            _health = GetComponent<Health>();
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponent<Animator>();
         }
@@ -22,16 +25,19 @@ namespace RPG.Movement
         // Update is called once per frame
         void Update()
         {
+            _agent.enabled = !_health.IsDead();
             UpdateAnimations();
         }
-        public void StartMoveAction(Vector3 destination)
+        public void StartMoveAction(Vector3 destination, float speedFraction)
         {
-            GetComponent<ActionScheduler>().StartAction(this);
-            MoveTo(destination);
+            _actionScheduler.StartAction(this);
+            MoveTo(destination, speedFraction);
         }
-        public void MoveTo(Vector3 destination)
+
+        public void MoveTo(Vector3 destination, float speedFraction)
         {
             _agent.destination = destination;
+            _agent.speed = _maxSpeed * Mathf.Clamp01(speedFraction);
             _agent.isStopped = false;
         }
 

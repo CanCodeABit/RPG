@@ -65,10 +65,10 @@ MonoBehaviour:
     m_Value: 1
   upperHemisphereLuxValue:
     m_OverrideState: 1
-    m_Value: 0.4660715
+    m_Value: 0.46607146
   upperHemisphereLuxColor:
     m_OverrideState: 1
-    m_Value: {x: 0.18750614, y: 0.29181972, z: 0.5}
+    m_Value: {x: 0.18750615, y: 0.29181966, z: 0.5}
   desiredLuxValue:
     m_OverrideState: 1
     m_Value: 20000
@@ -1275,8 +1275,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 1
   threshold:
-    m_OverrideState: 0
-    m_Value: 92.23
+    m_OverrideState: 1
+    m_Value: 0
   intensity:
     m_OverrideState: 1
     m_Value: 0.501
@@ -1285,7 +1285,7 @@ MonoBehaviour:
     m_Value: 0.712
   tint:
     m_OverrideState: 1
-    m_Value: {r: 0.7287736, g: 0.9716981, b: 0.9473691, a: 1}
+    m_Value: {r: 0.5, g: 0.098806255, b: 0, a: 1}
   dirtTexture:
     m_OverrideState: 1
     m_Value: {fileID: 0}

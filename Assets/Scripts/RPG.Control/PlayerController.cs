@@ -1,5 +1,8 @@
+using System.Reflection;
 using RPG.Combat;
+using RPG.Core;
 using RPG.Movement;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 namespace RPG.Control
@@ -8,17 +11,20 @@ namespace RPG.Control
     {
         private Camera _mainCamera;
         private Mover _mover;
+        private Health  _health;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
             _mover = GetComponent<Mover>();
             _mainCamera = Camera.main;
+            _health = GetComponent<Health>();
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (_health.IsDead()) return;
             if (InteractWithCombat()) return;
             if(InteractWithMovement()) return;
             Debug.Log("Nothing");
@@ -30,11 +36,15 @@ namespace RPG.Control
             foreach (RaycastHit hit in hits)
             {
                 CombatTarget target = hit.transform.GetComponent<CombatTarget>();
-                if (target == null) continue;
-
-                if (Input.GetMouseButtonDown(0))
+                if(target == null) continue;
+                if (!GetComponent<Fighter>().CanAttack(target.gameObject))
                 {
-                    GetComponent<Fighter>().Attack(target);
+                    continue;
+                }
+
+                if (Input.GetMouseButton(0))
+                {
+                    GetComponent<Fighter>().Attack(target.gameObject);
                 }
 
                 return true;
@@ -50,7 +60,7 @@ namespace RPG.Control
             {
                 if (Input.GetMouseButton(0))
                 {
-                    _mover.StartMoveAction(hit.point);
+                    _mover.StartMoveAction(hit.point, 1f);
                 }
                 return true;
             }
