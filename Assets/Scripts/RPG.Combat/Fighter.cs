@@ -11,6 +11,8 @@ namespace RPG.Combat
         [SerializeField] private float weaponRange;
         [SerializeField] private float timeBetweenAttacks = 1.5f;
         [SerializeField] private float weaponDamage = 10f;
+        [SerializeField] private GameObject weaponPrefab = null;
+        [SerializeField] private Transform handTransform = null;
         private Health _target;
 
         private Mover _mover;
@@ -21,9 +23,9 @@ namespace RPG.Combat
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
-            _timeSinceLastAttack = 0f;
             _animator = GetComponent<Animator>();
             _mover = GetComponent<Mover>();
+            SpawnWeapon();
         }
 
         // Update is called once per frame
@@ -43,6 +45,10 @@ namespace RPG.Combat
             }
         }
 
+        private void SpawnWeapon()
+        {
+            Instantiate(weaponPrefab, handTransform);
+        }
         private void AttackBehavior()
         {
             transform.LookAt(_target.transform);
