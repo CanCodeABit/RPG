@@ -167,11 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7196a38ab8d32cd4fa4ec5ee13e7e22c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponRange: 2
   timeBetweenAttacks: 1
-  weaponDamage: 10
-  weaponPrefab: {fileID: 1574728153442538424, guid: 18a1fdeb637121c418ab2fa00ccc07f2, type: 3}
-  handTransform: {fileID: 2842774882281598162}
+  rightHandTransform: {fileID: 0}
+  leftHandTransform: {fileID: 0}
+  defaultWeapon: {fileID: 0}
 --- !u!114 &5564344961207811985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,10 +296,5 @@ PrefabInstance:
 --- !u!4 &2842774882281587876 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 417656, guid: 30cf93deff988e74e88a144bd2127c18, type: 3}
-  m_PrefabInstance: {fileID: 2842774882281479132}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &2842774882281598162 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 423694, guid: 30cf93deff988e74e88a144bd2127c18, type: 3}
   m_PrefabInstance: {fileID: 2842774882281479132}
   m_PrefabAsset: {fileID: 0}

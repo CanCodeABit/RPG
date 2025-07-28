@@ -2,19 +2,21 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using RPG.Core;
 using UnityEngine;
 using RPG.Movement;
+using RPG.Saving;
+using RPG.Attributes;
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour, IAction
+    public class Fighter : MonoBehaviour, IAction, ISaveable
     {
         private static readonly int Attack1 = Animator.StringToHash("attack");
         private static readonly int StopAttack = Animator.StringToHash("stopAttack");
-        [SerializeField] private float weaponRange;
+       
         [SerializeField] private float timeBetweenAttacks = 1.5f;
-        [SerializeField] private float weaponDamage = 10f;
-        [SerializeField] private GameObject weaponPrefab = null;
-        [SerializeField] private Transform handTransform = null;
+        [SerializeField] private Transform rightHandTransform = null;
+        [SerializeField] private Transform leftHandTransform = null;
+        [SerializeField] private Weapon defaultWeapon = null;
+        private Weapon currentWeapon = null;
         private Health _target;
-
         private Mover _mover;
         private Animator _animator;
 
@@ -25,10 +27,11 @@ namespace RPG.Combat
         {
             _animator = GetComponent<Animator>();
             _mover = GetComponent<Mover>();
-            SpawnWeapon();
+            if (defaultWeapon == null)
+            {
+                EquipWeapon(defaultWeapon);
+            }
         }
-
-        // Update is called once per frame
         void Update()
         {
             _timeSinceLastAttack += Time.deltaTime;
@@ -45,9 +48,10 @@ namespace RPG.Combat
             }
         }
 
-        private void SpawnWeapon()
+        public void EquipWeapon(Weapon weapon)
         {
-            Instantiate(weaponPrefab, handTransform);
+            currentWeapon = weapon;
+            weapon.Spawn(rightHandTransform,leftHandTransform, _animator);
         }
         private void AttackBehavior()
         {
@@ -77,13 +81,28 @@ namespace RPG.Combat
         private void Hit()
         {
             if(_target == null) return;
-            _target.TakeDamage(weaponDamage);
+            if(currentWeapon.HasProjectile())
+            {
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, _target, gameObject);
+            }
+            else
+            {
+                _target.TakeDamage(gameObject, currentWeapon.GetWeaponDamage());
+            }
+           
+        }
+        private void Shoot()
+        {
+            Hit();
         }
         private bool GetInRange()
         {
-            return Vector3.Distance(transform.position, _target.transform.position) < weaponRange;
+            return Vector3.Distance(transform.position, _target.transform.position) < currentWeapon.GetWeaponRange();
         }
-
+        public Health GetTarget()
+        {
+            return _target;
+        }
         public void Cancel()
         {
             _target = null;
@@ -101,6 +120,23 @@ namespace RPG.Combat
         {
             GetComponent<ActionScheduler>().StartAction(this);
             _target = combatTarget.GetComponent<Health>();
+        }
+
+        public object CaptureState()
+        {
+            return currentWeapon.name;
+        }
+
+        public void RestoreState(object state)
+        {
+            string weaponName = (string)state;
+            Weapon weapon = Resources.Load<Weapon>(weaponName);
+            if (weapon == null)
+            {
+                Debug.LogWarning($"Weapon {weaponName} not found, equipping default weapon.");
+                weapon = defaultWeapon;
+            }
+            EquipWeapon(weapon);
         }
     }
 }

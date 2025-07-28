@@ -1,3 +1,4 @@
+using RPG.Attributes;
 using RPG.Combat;
 using RPG.Core;
 using RPG.Movement;
@@ -67,7 +68,6 @@ namespace RPG.Control
         private void PatrolBehaviour()
         {
             Vector3 nextPosition = _guardPosition;
-            float wait = 0f;
             if (patrolPath != null)
             {
                 if (AtWaypoint())
