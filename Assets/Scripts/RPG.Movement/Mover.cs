@@ -1,3 +1,4 @@
+using System;
 using RPG.Attributes;
 using RPG.Core;
 using RPG.Saving;
@@ -65,7 +66,8 @@ namespace RPG.Movement
         public void RestoreState(object state)
         {
             SerializableVector3 position = (SerializableVector3)state;
-            transform.position = position.ToVector();
+            GetComponent<NavMeshAgent>().Move(position.ToVector());
+            GetComponent<ActionScheduler>().CancelAction();
         }
     }
 }

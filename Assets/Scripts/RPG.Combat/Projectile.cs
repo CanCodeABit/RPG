@@ -2,6 +2,7 @@ using System;
 using RPG.Attributes;
 using RPG.Core;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RPG.Combat
 {
@@ -15,6 +16,7 @@ namespace RPG.Combat
         [SerializeField] private float lifeTime = 5f;
         [SerializeField] private GameObject[] destroyOnHit = null;
         [SerializeField] private float lifeAfterImpact = 2f;
+        [SerializeField] private UnityEvent onHit = null;
         private GameObject instigator = null;
         // Update is called once per frame
         void Start()
@@ -48,6 +50,7 @@ namespace RPG.Combat
             if (other.GetComponent<Health>() != target) return;
             if (target.IsDead()) return;
             target.TakeDamage(instigator, damage);
+            onHit.Invoke();
             speed = 0; // Stop moving after hitting the target
             if (hitEffect != null)
             {

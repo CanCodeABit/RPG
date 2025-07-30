@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 287725123883973141, guid: e50cb39e7011b264aa584b2c6c875de1, type: 3}
       propertyPath: weapon
       value: 
-      objectReference: {fileID: 11400000, guid: 27a3c18602d435a47804f39c7eb8f3c0, type: 2}
+      objectReference: {fileID: 1134011294344682156}
     - target: {fileID: 3205959699684819123, guid: e50cb39e7011b264aa584b2c6c875de1, type: 3}
       propertyPath: m_Name
       value: Fireball Pickup
@@ -62,8 +62,28 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8232277538535869268, guid: e50cb39e7011b264aa584b2c6c875de1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3673611445371840634}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3205959699684819123, guid: e50cb39e7011b264aa584b2c6c875de1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1134011294344682156}
   m_SourcePrefab: {fileID: 100100000, guid: e50cb39e7011b264aa584b2c6c875de1, type: 3}
+--- !u!1 &3563958418615417292 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3205959699684819123, guid: e50cb39e7011b264aa584b2c6c875de1, type: 3}
+  m_PrefabInstance: {fileID: 2092029851668789631}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1134011294344682156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3563958418615417292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff754088f642cb54ba3c08988a4b3c88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8013749674859082283 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8232277538535869268, guid: e50cb39e7011b264aa584b2c6c875de1, type: 3}

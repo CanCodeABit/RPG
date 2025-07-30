@@ -482,6 +482,46 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4514593802759134304}
     m_Modifications:
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[0].texture
+      value: 
+      objectReference: {fileID: 2800000, guid: 21628736160fcc9488493401da3ef621, type: 3}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[1].texture
+      value: 
+      objectReference: {fileID: 2800000, guid: 8859fce41c5d0a148ad0b7eebfca7fe9, type: 3}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[2].texture
+      value: 
+      objectReference: {fileID: 2800000, guid: 2d18e23e3ce249b4489b8bcdd02d3f48, type: 3}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[3].texture
+      value: 
+      objectReference: {fileID: 2800000, guid: fe2443101ded6f544b32f8dc8690c367, type: 3}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[4].texture
+      value: 
+      objectReference: {fileID: 2800000, guid: f8c873f1e53e83f4aabf342d6be1dfc3, type: 3}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[1].cursorType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[2].cursorType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[3].cursorType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 165533326044045299, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
+      propertyPath: cursorMappings.Array.data[4].cursorType
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1344087989343159678, guid: 6b014bad9558cd84da6581efdf767512, type: 3}
       propertyPath: weapon
       value: 
@@ -624,6 +664,8 @@ MonoBehaviour:
   startingLevel: 1
   characterClass: 0
   progression: {fileID: 11400000, guid: b6c74b5b89e255d4fb933344957598dc, type: 2}
+  levelUpParticleEffect: {fileID: 1417563709260267875, guid: b0dbf48ebd41b2b44a00e73b1c2fc37d, type: 3}
+  useModifiers: 1
 --- !u!114 &1178502839246391236
 MonoBehaviour:
   m_ObjectHideFlags: 0

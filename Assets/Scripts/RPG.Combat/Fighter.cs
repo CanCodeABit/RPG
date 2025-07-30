@@ -4,9 +4,12 @@ using UnityEngine;
 using RPG.Movement;
 using RPG.Saving;
 using RPG.Attributes;
+using Unity.VisualScripting;
+using RPG.Stats;
+using System.Collections.Generic;
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour, IAction, ISaveable
+    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
     {
         private static readonly int Attack1 = Animator.StringToHash("attack");
         private static readonly int StopAttack = Animator.StringToHash("stopAttack");
@@ -14,8 +17,8 @@ namespace RPG.Combat
         [SerializeField] private float timeBetweenAttacks = 1.5f;
         [SerializeField] private Transform rightHandTransform = null;
         [SerializeField] private Transform leftHandTransform = null;
-        [SerializeField] private Weapon defaultWeapon = null;
-        private Weapon currentWeapon = null;
+        [SerializeField] private WeaponConfig defaultWeapon = null;
+        private WeaponConfig currentWeapon = null;
         private Health _target;
         private Mover _mover;
         private Animator _animator;
@@ -48,7 +51,7 @@ namespace RPG.Combat
             }
         }
 
-        public void EquipWeapon(Weapon weapon)
+        public void EquipWeapon(WeaponConfig weapon)
         {
             currentWeapon = weapon;
             weapon.Spawn(rightHandTransform,leftHandTransform, _animator);
@@ -81,13 +84,14 @@ namespace RPG.Combat
         private void Hit()
         {
             if(_target == null) return;
-            if(currentWeapon.HasProjectile())
+            float damage = GetComponent<BaseStats>().GetStat(Stat.Damage);
+            if (currentWeapon.HasProjectile())
             {
-                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, _target, gameObject);
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, _target, gameObject, damage);
             }
             else
             {
-                _target.TakeDamage(gameObject, currentWeapon.GetWeaponDamage());
+                _target.TakeDamage(gameObject, damage);
             }
            
         }
@@ -130,13 +134,39 @@ namespace RPG.Combat
         public void RestoreState(object state)
         {
             string weaponName = (string)state;
-            Weapon weapon = Resources.Load<Weapon>(weaponName);
+            WeaponConfig weapon = Resources.Load<WeaponConfig>(weaponName);
             if (weapon == null)
             {
                 Debug.LogWarning($"Weapon {weaponName} not found, equipping default weapon.");
                 weapon = defaultWeapon;
             }
             EquipWeapon(weapon);
+        }
+
+        public IEnumerable<float> GetAdditiveModifiers(Stat stat)
+        {
+            if(stat == Stat.Damage)
+            {
+                yield return currentWeapon.GetWeaponDamage();
+            }
+        }
+
+         public IEnumerable<float> GetPercentageModifiers(Stat stat)
+        {
+            if(stat == Stat.Damage)
+            {
+                yield return currentWeapon.GetPercentageBonus();
+            }
+        }
+
+        public float GetFlatModifier(Stat stat)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public float GetMultiplicativeModifier(Stat stat)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -29,14 +29,18 @@ namespace RPG.Control
 
         private ActionScheduler _actionScheduler;
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        void Awake()
         {
             _actionScheduler = GetComponent<ActionScheduler>();
             _mover = GetComponent<Mover>();
             _health = GetComponent<Health>();
             _fighter = GetComponent<Fighter>();
             _player = GameObject.FindWithTag("Player");
+        }
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
+        {
+            
             _guardPosition = transform.position;
         }
 

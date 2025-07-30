@@ -15,16 +15,16 @@ namespace RPG.SceneManagement
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Awake()
         {
-            
+            StartCoroutine(LoadLastScene());
         }
 
-        IEnumerator Start()
+        IEnumerator LoadLastScene()
         {
+            
+            yield return GetComponent<SavingSystem>().LoadLastScene(DefaultSaveFile);
             _fader = FindAnyObjectByType<Fader>();
-            _savingSystem = GetComponent<SavingSystem>();
             _fader.FadeImmediately();
-           yield return _savingSystem.LoadLastScene(DefaultSaveFile);
-           yield return _fader.FadeIn(fadeInTime);
+            yield return _fader.FadeIn(fadeInTime);
         }
 
         // Update is called once per frame
@@ -32,6 +32,7 @@ namespace RPG.SceneManagement
         {
             if (Input.GetKeyDown(KeyCode.S)) Save();
             if (Input.GetKeyUp(KeyCode.L)) Load();
+            if (Input.GetKeyDown(KeyCode.Delete)) Delete();
         }
 
         public void Load()
@@ -42,6 +43,10 @@ namespace RPG.SceneManagement
         public void Save()
         {
             _savingSystem.Save(DefaultSaveFile);
+        }
+        public void Delete()
+        {
+            _savingSystem.Delete(DefaultSaveFile);
         }
     }
 }

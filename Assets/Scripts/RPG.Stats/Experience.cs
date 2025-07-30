@@ -6,6 +6,7 @@ namespace RPG.Stats
 {
     public class Experience : MonoBehaviour, ISaveable
     {
+        public event Action OnExperienceGained;
         [SerializeField] private float experiencePoints = 0f;
 
         public object CaptureState()
@@ -13,10 +14,11 @@ namespace RPG.Stats
             return experiencePoints;
         }
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
         public void GainExperience(float points)
         {
             experiencePoints += points;
+            OnExperienceGained();
+            Debug.Log($"Gained {points} experience. Total: {experiencePoints}");
         }
 
         public void RestoreState(object state)

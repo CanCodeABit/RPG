@@ -1,22 +1,29 @@
 using RPG.Attributes;
+using RPG.Control;
 using RPG.Core;
 using UnityEngine;
-
 namespace RPG.Combat
 {
     [RequireComponent(typeof(Health))]
-    public class CombatTarget : MonoBehaviour
+    public class CombatTarget : MonoBehaviour, IRaycastable
     {
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        public CursorType GetCursorType()
         {
-        
+            return CursorType.Combat; // Return the appropriate cursor type for combat targets
         }
 
-        // Update is called once per frame
-        void Update()
+        public bool HandleRaycast(PlayerController playerController)
         {
-        
+            if (!playerController.GetComponent<Fighter>().CanAttack(gameObject))
+            {
+                return false; // Not a valid target
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                playerController.GetComponent<Fighter>().Attack(gameObject);
+            }
+            return true;
         }
     }
 }

@@ -19,11 +19,17 @@ namespace RPG.Stats
             }
             return levels[level - 1];
         }
+        public int GetLevels(Stat stat, CharacterClass characterClass)
+        {
+            BuildLookupTable();
+            float[] levels = lookupTable[characterClass][stat];
+            return levels.Length;
+        }
         private void BuildLookupTable()
         {
-            if(lookupTable != null) return;
+            if (lookupTable != null) return;
             lookupTable = new Dictionary<CharacterClass, Dictionary<Stat, float[]>>();
-            foreach (ProgressionCharacterClass progressionCharacterClass in characterClasses)   
+            foreach (ProgressionCharacterClass progressionCharacterClass in characterClasses)
             {
                 var statsLookup = new Dictionary<Stat, float[]>();
                 foreach (ProgressionStat progressionStat in progressionCharacterClass.stats)
