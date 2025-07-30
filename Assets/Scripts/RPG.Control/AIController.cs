@@ -10,9 +10,11 @@ namespace RPG.Control
     {
         [SerializeField] private float chaseDistance;
         [SerializeField] private float suspecionTime = 3f;
+        [SerializeField] private float agroCooldownTime = 5f;
         [SerializeField] private PatrolPath patrolPath;
         [SerializeField] private float waypointTolerance = 1f;
         [SerializeField] private float waypointDwellTime = 2f;
+        [SerializeField] private float shoutDistance = 5f;
 
         private Fighter _fighter;
         private GameObject _player;
@@ -24,6 +26,7 @@ namespace RPG.Control
 
         private float _timeSinceLastSawPlayer = Mathf.Infinity;
         private float _timeSinceArrivedAtWaypoint = Mathf.Infinity;
+        private float _timeSinceAggrevated = Mathf.Infinity;
         [Range(0,1)]
         private float _patrolSpeedFraction = 0.2f;
 
@@ -48,7 +51,7 @@ namespace RPG.Control
         void Update()
         {
             if (_health.IsDead()) return;
-            if (InAttackRangeOfPlayer() && _fighter.CanAttack(_player))
+            if (IsAggrevated() && _fighter.CanAttack(_player))
             {
                 ActionBehaviour();
             }
@@ -62,11 +65,29 @@ namespace RPG.Control
             }
             UpdateTimers();
         }
+        public void Aggrevate()
+        {
+            _timeSinceAggrevated = 0;
+        }
+        public void AggrevateNearbyEnenmies()
+        {
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, shoutDistance, Vector3.up, 0f);
+            foreach (RaycastHit hit in hits)
+            {
+                AIController aiController = hit.collider.GetComponent<AIController>();
+                if (aiController != null && aiController != this)
+                {
+                    aiController.Aggrevate();
+                }
+            }
+        }
+           
 
         private void UpdateTimers()
         {
             _timeSinceLastSawPlayer += Time.deltaTime;
             _timeSinceArrivedAtWaypoint += Time.deltaTime;
+            _timeSinceAggrevated += Time.deltaTime;
         }
 
         private void PatrolBehaviour()
@@ -115,9 +136,10 @@ namespace RPG.Control
             _fighter.Attack(_player);
         }
 
-        private bool InAttackRangeOfPlayer()
+        private bool IsAggrevated()
         {
-            return Vector3.Distance(_player.transform.position, transform.position) < chaseDistance;
+            return Vector3.Distance(_player.transform.position, transform.position) < chaseDistance ||
+            _timeSinceAggrevated < agroCooldownTime;
         }
     }
 }

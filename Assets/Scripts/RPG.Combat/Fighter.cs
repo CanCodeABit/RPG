@@ -7,6 +7,7 @@ using RPG.Attributes;
 using Unity.VisualScripting;
 using RPG.Stats;
 using System.Collections.Generic;
+using System;
 namespace RPG.Combat
 {
     public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
@@ -18,29 +19,32 @@ namespace RPG.Combat
         [SerializeField] private Transform rightHandTransform = null;
         [SerializeField] private Transform leftHandTransform = null;
         [SerializeField] private WeaponConfig defaultWeapon = null;
-        private WeaponConfig currentWeapon = null;
+        private WeaponConfig currentWeaponConfig = null;
         private Health _target;
         private Mover _mover;
         private Animator _animator;
+        private Weapon _currentWeapon;
 
         private float _timeSinceLastAttack = Mathf.Infinity;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        void Awake()
         {
             _animator = GetComponent<Animator>();
             _mover = GetComponent<Mover>();
-            if (defaultWeapon == null)
-            {
-                EquipWeapon(defaultWeapon);
-            }
+            currentWeaponConfig = defaultWeapon;
+            _currentWeapon = SetDefaultWeapon();
+        }
+        void Start()
+        {
+            EquipWeapon(currentWeaponConfig);
         }
         void Update()
         {
             _timeSinceLastAttack += Time.deltaTime;
             if(_target == null) return;
             if(_target.IsDead()) return;
-            if (!GetInRange())
+            if (!GetInRange(_target.transform))
             {
                 _mover.MoveTo(_target.transform.position, 1f);
             }
@@ -50,11 +54,18 @@ namespace RPG.Combat
                 AttackBehavior();
             }
         }
-
+        private Weapon SetDefaultWeapon()
+        {
+            return AttachWeapon(defaultWeapon);
+        }
         public void EquipWeapon(WeaponConfig weapon)
         {
-            currentWeapon = weapon;
-            weapon.Spawn(rightHandTransform,leftHandTransform, _animator);
+            currentWeaponConfig = weapon;
+            AttachWeapon(weapon);
+        }
+        private Weapon AttachWeapon(WeaponConfig weapon)
+        {
+           return weapon.Spawn(rightHandTransform, leftHandTransform, _animator);
         }
         private void AttackBehavior()
         {
@@ -78,6 +89,11 @@ namespace RPG.Combat
             {
                 return false;
             };
+            if (!_mover.CanMoveTo(combatTarget.transform.position) &&
+            !GetInRange(combatTarget.transform))
+            {
+                return false;
+            }
             Health healthToTest = combatTarget.GetComponent<Health>();
             return combatTarget != null && !healthToTest.IsDead();
         }
@@ -85,9 +101,13 @@ namespace RPG.Combat
         {
             if(_target == null) return;
             float damage = GetComponent<BaseStats>().GetStat(Stat.Damage);
-            if (currentWeapon.HasProjectile())
+            if(_currentWeapon != null) //TODO: lazy value shit check
             {
-                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, _target, gameObject, damage);
+                _currentWeapon.OnHit();
+            }
+            if (currentWeaponConfig.HasProjectile())
+            {
+                currentWeaponConfig.LaunchProjectile(rightHandTransform, leftHandTransform, _target, gameObject, damage);
             }
             else
             {
@@ -99,9 +119,9 @@ namespace RPG.Combat
         {
             Hit();
         }
-        private bool GetInRange()
+        private bool GetInRange(Transform targetTransform)
         {
-            return Vector3.Distance(transform.position, _target.transform.position) < currentWeapon.GetWeaponRange();
+            return Vector3.Distance(transform.position, targetTransform.position) < currentWeaponConfig.GetWeaponRange();
         }
         public Health GetTarget()
         {
@@ -128,7 +148,7 @@ namespace RPG.Combat
 
         public object CaptureState()
         {
-            return currentWeapon.name;
+            return currentWeaponConfig.name;
         }
 
         public void RestoreState(object state)
@@ -147,7 +167,7 @@ namespace RPG.Combat
         {
             if(stat == Stat.Damage)
             {
-                yield return currentWeapon.GetWeaponDamage();
+                yield return currentWeaponConfig.GetWeaponDamage();
             }
         }
 
@@ -155,7 +175,7 @@ namespace RPG.Combat
         {
             if(stat == Stat.Damage)
             {
-                yield return currentWeapon.GetPercentageBonus();
+                yield return currentWeaponConfig.GetPercentageBonus();
             }
         }
 

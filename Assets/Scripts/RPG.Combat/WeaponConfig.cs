@@ -16,19 +16,21 @@ namespace RPG.Combat
         [SerializeField] bool isRightHanded = true;
         [SerializeField] Projectile projectile = null;
         const string weaponName = "Weapon";
-        public void Spawn(Transform rightHand, Transform leftHand, Animator _animator)
+        public Weapon Spawn(Transform rightHand, Transform leftHand, Animator _animator)
         {
+            Weapon weapon = null;
             DestroyOldWeapon(rightHand, leftHand);
             if (weaponPrefab != null)
             {
                 var weaponTransform = isRightHanded ? rightHand : leftHand;
-                Weapon weapon = Instantiate(weaponPrefab, weaponTransform);
+                weapon = Instantiate(weaponPrefab, weaponTransform);
                 weapon.gameObject.name = weaponName;
 
             }
             var overrideController = _animator.runtimeAnimatorController as AnimatorOverrideController;
             if (animatorOverride != null) _animator.runtimeAnimatorController = animatorOverride;
-            else if (overrideController != null)_animator.runtimeAnimatorController = overrideController.runtimeAnimatorController;
+            else if (overrideController != null) _animator.runtimeAnimatorController = overrideController.runtimeAnimatorController;
+            return weapon;
         }
 
         private void DestroyOldWeapon(Transform rightHand, Transform leftHand)

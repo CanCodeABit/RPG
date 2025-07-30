@@ -15,6 +15,8 @@ namespace RPG.Movement
         private Health _health;
         private float _maxSpeed = 6f;
         private ActionScheduler _actionScheduler;
+        [SerializeField] private float maxPathLenght = 40f;
+
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
@@ -36,7 +38,15 @@ namespace RPG.Movement
             _actionScheduler.StartAction(this);
             MoveTo(destination, speedFraction);
         }
+        public bool CanMoveTo(Vector3 destination)
+        {
+            NavMeshPath path = new NavMeshPath();
+            if (!NavMesh.CalculatePath(transform.position, destination, NavMesh.AllAreas, path)) return false; // Path calculation failed
+            if (path.status != NavMeshPathStatus.PathComplete) return false; // Path is not complete
+            if (GetPathLenght(path) > maxPathLenght) return false; // Path exceeds maximum length 
 
+            return true;
+        }
         public void MoveTo(Vector3 destination, float speedFraction)
         {
             _agent.destination = destination;
@@ -68,6 +78,16 @@ namespace RPG.Movement
             SerializableVector3 position = (SerializableVector3)state;
             GetComponent<NavMeshAgent>().Move(position.ToVector());
             GetComponent<ActionScheduler>().CancelAction();
+        }
+         private float GetPathLenght(NavMeshPath path)
+        {
+            float totalDistance = 0f;
+            if (path.corners.Length < 2) return totalDistance; // No path or only one point in the path
+            for (int i = 0; i < path.corners.Length - 1; i++)
+            {
+                totalDistance += Vector3.Distance(path.corners[i], path.corners[i + 1]);
+            }
+            return totalDistance;
         }
     }
 }
