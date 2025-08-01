@@ -2,51 +2,56 @@ using System;
 using UnityEngine;
 using RPG.Movement;
 using RPG.Combat;
+using RPG.Core;
 
 namespace RPG.Control
 {
     public class PlayerController : MonoBehaviour
     {
+        private Health health;
+
+        void Start()
+        {
+            health = GetComponent<Health>();
+        }
         void Update()
         {
-            InteractWithMovement();
-            InteractWithCombat();
+            if(health.IsDead()) return;
+            if (InteractWithCombat()) return;
+            if (InteractWithMovement()) return;
         }
 
-        private void InteractWithMovement()
-        {
-            if (Input.GetMouseButton(0))
-            {
-                MoveToCursor();
-            }
-        }
-
-        private void MoveToCursor()
+        private bool InteractWithMovement()
         {
             if (Physics.Raycast(GetMouseRay(), out RaycastHit hit))
             {
-                GetComponent<Mover>().MoveTo(hit.point);
+                if (Input.GetMouseButton(0))
+                {
+                    GetComponent<Mover>().StartMoveAction(hit.point, 1f);
+                }
+                return true;
             }
+            return false;
         }
-
-        private static Ray GetMouseRay()
-        {
-            return Camera.main.ScreenPointToRay(Input.mousePosition);
-        }
-
-        private void InteractWithCombat()
+        private bool InteractWithCombat()
         {
             RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
             foreach (var hit in hits)
             {
                 CombatTarget target = hit.collider.GetComponent<CombatTarget>();
                 if (target == null) continue;
-                if( Input.GetMouseButtonDown(0))
+                if (!GetComponent<Fighter>().CanAttack(target.gameObject)) continue;
+                if (Input.GetMouseButton(0))
                 {
-                    GetComponent<Fighter>().Attack(target);
-                    return; 
+                    GetComponent<Fighter>().Attack(target.gameObject);
                 }
+                return true;
             }
+            return false;
+        }
+        private static Ray GetMouseRay()
+        {
+            return Camera.main.ScreenPointToRay(Input.mousePosition);
         }
     }
 }

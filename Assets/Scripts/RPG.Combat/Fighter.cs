@@ -1,24 +1,81 @@
+using RPG.Core;
+using RPG.Movement;
 using UnityEngine;
 
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour
+    public class Fighter : MonoBehaviour, IAction
     {
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
-        {
+        [SerializeField] private float attackRange = 2f;
+        [SerializeField] private float timeBetweenAttacks = 1f;
+        [SerializeField] private float weaponDamage = 5f;
+        private Health target;
 
-        }
+        private float timeSinceLastAttack = Mathf.Infinity;
 
-        // Update is called once per frame
+       
         void Update()
         {
+            timeSinceLastAttack += Time.deltaTime;
+            if (target == null) return;
+            if (target.IsDead()) return;
+            if (!GetIsInRange())
+            {
+                GetComponent<Mover>().MoveTo(target.transform.position, 1f);
+            }
+            else
+            {
+                GetComponent<Mover>().Cancel();
+                AttackBehaviour();
+            }
+        }
+
+        private void AttackBehaviour()
+        {
+            transform.LookAt(target.transform);
+            if (timeSinceLastAttack < timeBetweenAttacks) return;
+            TriggerAttack();
+            timeSinceLastAttack = 0;
+        }
+
+        private void TriggerAttack()
+        {
+            GetComponent<Animator>().ResetTrigger("stopAttack");
+            GetComponent<Animator>().SetTrigger("attack");
+        }
+        private void StopAttack()
+        {
+            GetComponent<Animator>().ResetTrigger("attack");
+            GetComponent<Animator>().SetTrigger("stopAttack");
+        }
+        private bool GetIsInRange()
+        {
+            return Vector3.Distance(transform.position, target.transform.position) < attackRange;
+        }
+        private void Hit() // Animation event
+        {
+            if (target == null) return;
+            target.TakeDamage(weaponDamage);
+        }
+
+
+        ////========PUBLIC METHODS========////
+        public void Attack(GameObject combatTarget)
+        {
+            GetComponent<ActionScheduler>().StartAction(this);
+            target = combatTarget.GetComponent<Health>();
+        }
+        public void Cancel()
+        {
+            StopAttack();
+            target = null;
 
         }
-        public void Attack(CombatTarget target)
+        public bool CanAttack(GameObject combatTarget)
         {
-            // Implement attack logic here
-            Debug.Log("Attacking " + target.name);
+            if(combatTarget == null) return false;
+            Health targetToTest = combatTarget.GetComponent<Health>();
+            return targetToTest != null && !targetToTest.IsDead();
         }
     }
 }

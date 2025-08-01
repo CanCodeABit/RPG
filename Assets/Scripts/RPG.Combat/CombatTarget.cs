@@ -1,10 +1,11 @@
+using RPG.Core;
 using UnityEngine;
 
 namespace RPG.Combat
 {
-    // CombatTarget class is used to identify targets for combat interactions
+    [RequireComponent(typeof(Health))]
     public class CombatTarget : MonoBehaviour
     {
-        
+
     }
 }
